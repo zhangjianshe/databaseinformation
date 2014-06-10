@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="database_gen" default="jar">
+	<property name="database_schema" value="{{SCHEMA}}"></property>
+
+	<property name="gen.path" value="src">
+	</property>
+	<property name="bin.path" value="bin">
+	</property>
+	<property name="target.module" value="module">
+	</property>
+	<property name="target.access" value="access">
+	</property>
+	<property name="basepath" value="{{BASEPATH}}target/">
+	</property>
+	
+	<path id="classpath">
+		<fileset dir="..\..\lib">
+						<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<target name="clean" description="">
+		<deltree dir="${bin.path}" />
+		<deltree dir="${target.access}" />
+		<deltree dir="${target.module}" />
+		<deltree dir="${basepath}" />
+		<mkdir dir="${bin.path}" />
+		<mkdir dir="${target.access}" />
+		<mkdir dir="${target.module}" />
+		<mkdir dir="${basepath}" />
+	</target>
+	<target name="compile" depends="clean" description="">
+		<echo>start compile ${gen.path}</echo>
+		<javac target="1.6" srcdir="${gen.path}" destdir="${bin.path}" includeantruntime="true" encoding="UTF-8">
+			<classpath refid="classpath">
+			</classpath>
+		</javac>
+
+		<copydir dest="${bin.path}" src="${gen.path}" defaultexcludes="true">
+			<include name="**/*.xml" />
+			<include name="**/*.java" />
+			
+		</copydir>
+
+	
+
+		<copydir dest="${target.module}" src="${bin.path}" defaultexcludes="true">
+			<include name="**/module/*.class" />
+			<include name="**/module/*.java" />
+		</copydir>
+
+		<copydir dest="${target.access}" src="${bin.path}" defaultexcludes="true">
+			<include name="**/dao/*.class" />
+			<include name="**/dao/*.java" />
+		</copydir>
+		
+		<copyfile src="database.properties" dest="${basepath}database.properties"/>
+		<copyfile src="${gen.path}\dwr_objs.xml" dest="${basepath}dwr_objs.xml"/>
+		<copyfile src="..\..\lib\cn.mapway.tools.database.jar" dest="${basepath}cn.mapway.tools.database.jar"/>
+		<copyfile src="..\..\lib\javax.servlet.jsp.jstl.jar" dest="${basepath}javax.servlet.jsp.jstl.jar"/>
+		<copyfile src="..\..\lib\cn.mapway.tools.database.jar" dest="${basepath}cn.mapway.tools.database.jar"/>
+		
+	</target>
+
+
+	<target name="jar" depends="compile" description="?????">
+
+		<manifestclasspath property="jar.classpath" jarfile="${jar.pathfile}">
+			<classpath refid="classpath">
+			</classpath>
+		</manifestclasspath>
+		<property name="jar.module" value="${basepath}${database_schema}_database_module.jar">
+		</property>
+		<property name="jar.access" value="${basepath}${database_schema}_database_access.jar">
+		</property>
+
+		<jar jarfile="${jar.access}" basedir="${target.access}">
+			<manifest>
+				<attribute name="Create-Date" value="$(DSTAMP)-${TSTAMP}" />
+				<attribute name="Author" value="zhangjianshe@gmail.com" />
+			</manifest>
+		</jar>
+
+		<jar jarfile="${jar.module}" basedir="${target.module}">
+			<manifest>
+				<attribute name="Create-Date" value="$(DSTAMP)-${TSTAMP}" />
+				<attribute name="Author" value="zhangjianshe@gmail.com" />
+			</manifest>
+		</jar>
+	</target>
+</project>

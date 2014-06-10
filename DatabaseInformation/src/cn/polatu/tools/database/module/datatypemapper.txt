@@ -1,0 +1,19 @@
+TEXT	String	String
+TIMESTAMP	Timestamp	Timestamp	java.sql.Timestamp
+VARCHAR	String	String	
+INT	Integer	Int	
+Date	Date	Date	java.sql.Date
+BOOL	Boolean	Boolean	
+NUMERIC	Double	Double
+DOUBLE	Double	Double	
+FLOAT	Float	Float	
+DECIMAL	Double	Double	
+LONGTEXT	String	String
+character	String	String
+BIGINT	Long	Long
+custom_long	long	long
+custom_byte	byte[]	byte[]
+custom_boolean[]	boolean[]	boolean[]
+custom_boolean	boolean	boolean
+custom_int	int	int
+custom_string	String	String

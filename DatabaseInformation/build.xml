@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--生成 DatabaseApi Jar 文件-->
+
+<project name="databaseapi" default="jar" basedir=".">
+
+	<description> DatabaseApi Jar 4.0</description>
+
+	<property name="src" value="src" />
+	<property name="classes" value="bin/classes" />
+	<property name="target" value="target" />
+	<property name="lib" value="lib">
+	</property>
+
+	<!--创建编译任务，名字是compile,depends指定了comiple任务依赖init任务-->
+	<target name="compile" depends="clean" description="comile target">
+		<!--javac，编译，对应java中的javac命令。
+		其中srcdir定义源文件路径 destdir定义编译后文件路径，
+		includeantruntime作用是指定编译任务是否包含ant的classpath,可有可无，不影响编译，
+		但不写可能会出现警告，为了眼不见心不烦，加上吧-->
+
+
+		<javac srcdir="${src}" destdir="${classes}" includeantruntime="true" encoding="UTF-8">
+			<!-- classpath 定义编译需要的claspath -->
+			<classpath>
+				<fileset dir="${lib}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+
+	<!-- 创建时间戳 -->
+	<tstamp />
+
+	<!--定义jarfilename，准备进行打包操作。其中ant.project.name是ant默认的一个变量，值为最上面定义的project的name
+	${DSTAMP}为日期，格式为20111123；${TSTAMP}为时间，格式为2256，表示22点56分。
+		-->
+	<property name="jarfilename" value="${ant.project.name}.jar" />
+	<!--打包开始，名字为jar，依赖任务为compile-->
+	<target name="jar" depends="compile" description="make jar file">
+		<!-- 拷贝资源文件 -->
+
+		<copydir dest="${classes}" src="${src}" defaultexcludes="false">
+			<exclude name="**/*.java" />
+		</copydir>
+
+		<!--
+		<copydir dest="${classes}/war" src="war" defaultexcludes="true">
+			<include name="console/*" />
+			<include name="site_configure/*" />
+		</copydir>
+		-->
+		<path id="classpath">
+			<fileset dir="${lib}">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+
+		<copy file="src\postgres.properties" tofile="${target}\postgres.properties">
+		</copy>
+		<copy file="src\mysql.properties" tofile="${target}\mysql.properties">
+		</copy>
+		<copydir dest="${target}\lib" src="lib">
+		</copydir>
+		<manifestclasspath property="jar.classpath" jarfile="${jarpathname}">
+			<classpath refid="classpath">
+			</classpath>
+		</manifestclasspath>
+		<!--jar操作，jarfile指定jar包存放路径，basedir为编译后的class的目录-->
+		<jar jarfile="${target}\${jarfilename}" basedir="${classes}">
+			<manifest>
+				<attribute name="Create-Date" value="$(DSTAMP)-${TSTAMP}" />
+				<attribute name="Author" value="zhangjianshe@gmail.com" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
+				<attribute name="Main-Class" value="cn.polatu.tools.database.DatabaseApi" />
+			</manifest>
+		</jar>
+	</target>
+
+	<!--运行一下jar包，试试看效果-->
+	<target name="run" depends="jar">
+		<!--其实这里就是运行jar命令，注意fork一定加上，不然不起作用-->
+		<java jar="lib\${ant.project.name}.jar" fork="true">
+			<classpath path="c:\j2ee6">
+			</classpath>
+			<classpath>
+				<fileset dir="D:\tomcat7\lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+
+
+	<!-- 清理 -->
+	<target name="clean">
+
+		<delete dir="${classes}" />
+		<mkdir dir="${classes}" />
+		<delete includeEmptyDirs="true">
+			<fileset dir="${target}" includes="**/*" defaultexcludes="no" />
+		</delete>
+		<mkdir dir="${target}" />
+		<mkdir dir="${target}\lib" />
+
+	</target>
+</project>
