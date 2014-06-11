@@ -357,7 +357,7 @@ class PostgresGenerator {
 					p1 += " and \\\"" + c.getName() + "\\\"=?";
 					p2 += "," + c.getName().toLowerCase();
 				} else {
-					p1 += "\\\""+c.getName() + "\\\"=?";
+					p1 += "\\\"" + c.getName() + "\\\"=?";
 					p2 += c.getName().toLowerCase();
 				}
 			}
@@ -695,7 +695,7 @@ class PostgresGenerator {
 		c.isWrite = false;
 		c.isStatic = false;
 		c.setDbType("custom_boolean[]");
-		c.defaultValue = "new boolean[" + t.getColumns().size() + "];";
+		c.defaultValue = "new boolean[" + (t.getColumns().size() + 1) + "];";
 		c.setName("searched", false);
 		unit.getFields().add(c);
 
@@ -735,7 +735,8 @@ class PostgresGenerator {
 			c.isWrite = false;
 			c.isStatic = true;
 			c.setDbType("custom_string");
-			c.defaultValue = "\"\\\"" + (t.getColumns().get(i).getFieldName())+"\\\"\"";
+			c.defaultValue = "\"\\\"" + (t.getColumns().get(i).getFieldName())
+					+ "\\\"\"";
 			c.setName("FIELD_" + t.getColumns().get(i).getFieldName(), false);
 			c.setComment("字段" + t.getColumns().get(i).getComment() + "名称");
 			unit.getFields().add(c);
