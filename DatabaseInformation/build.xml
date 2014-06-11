@@ -100,7 +100,9 @@
 		<delete dir="${classes}" />
 		<mkdir dir="${classes}" />
 		<delete includeEmptyDirs="true">
-			<fileset dir="${target}" includes="**/*" defaultexcludes="no" />
+			<fileset dir="${target}" includes="**/*" defaultexcludes="no" >
+				<exclude name="**/*.bat" />
+			</fileset>
 		</delete>
 		<mkdir dir="${target}" />
 		<mkdir dir="${target}\lib" />

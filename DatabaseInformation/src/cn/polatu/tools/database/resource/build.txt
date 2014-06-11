@@ -47,6 +47,7 @@
 		<copydir dest="${target.module}" src="${bin.path}" defaultexcludes="true">
 			<include name="**/module/*.class" />
 			<include name="**/module/*.java" />
+			<include name="**/*gwt.xml" />
 		</copydir>
 
 		<copydir dest="${target.access}" src="${bin.path}" defaultexcludes="true">

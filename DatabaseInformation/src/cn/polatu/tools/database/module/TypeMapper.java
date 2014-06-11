@@ -30,7 +30,7 @@ public class TypeMapper {
 
 	private void readFromFile() throws IOException {
 		ClassLoader cl= TypeMapper.class.getClassLoader();
-		InputStream in=cl.getResourceAsStream("cn/polatu/tools/database/module/datatypemapper.txt");	
+		InputStream in=cl.getResourceAsStream("cn/polatu/tools/database/resource/datatypemapper.txt");	
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in) );
 		String line = reader.readLine();
 		while (line != null && line.length() > 0) {
