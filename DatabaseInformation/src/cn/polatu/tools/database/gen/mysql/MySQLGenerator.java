@@ -59,7 +59,7 @@ class MySQLGenerator extends BObject{
 		try {
 			String build = Util
 					.readResource("cn/polatu/tools/database/resource/gwt.txt");
-			saveData(build, "module", schema.name + "Data.gwt.xml");
+			saveData(build, "", schema.name + "Data.gwt.xml");
 
 		} catch (IOException e) {
 			e.printStackTrace();

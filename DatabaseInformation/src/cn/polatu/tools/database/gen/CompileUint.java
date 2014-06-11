@@ -144,7 +144,7 @@ public class CompileUint extends BObject {
 			c.isRead = false;
 			c.isWrite = false;
 			c.isStatic = false;
-			c.isFinal = true;
+			c.isFinal = false;
 			c.setName("changed", false);
 			c.defaultValue = "new byte[" + fields.size() + "]";
 			c.setDbType("custom_byte[]");
@@ -302,7 +302,7 @@ public class CompileUint extends BObject {
 		log("source:" + fileName);
 		String data = toString();
 
-		log(data);
+		
 		out.write(data.getBytes("UTF-8"));
 		out.close();
 	}
