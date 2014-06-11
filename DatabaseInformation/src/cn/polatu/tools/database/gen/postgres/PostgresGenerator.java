@@ -259,7 +259,7 @@ class PostgresGenerator {
 		// 构造函数
 
 		Method m;
-		m = Method.createMethod(t.getName().toUpperCase() + "DaoImpl");
+		m = Method.createMethod(t.getName().toUpperCase() + "DAOImpl");
 		m.returnValue.setType("");
 		m.setAccess(CompileUint.ACCESS_PUBLIC);
 		m.paras.addParam("IConnectionPool", "pool", "", "数据库连接池");
@@ -268,7 +268,7 @@ class PostgresGenerator {
 		unit.getMethods().add(m);
 		m.comments.add("构造函数");
 
-		m = Method.createMethod(t.getName().toUpperCase() + "DaoImpl");
+		m = Method.createMethod(t.getName().toUpperCase() + "DAOImpl");
 		m.returnValue.setType("");
 		m.setAccess(CompileUint.ACCESS_PUBLIC);
 		m.paras.addParam("Connection", "connection", "", "数据库连接");
