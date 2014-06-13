@@ -62,6 +62,15 @@ public class Table {
 	public String getObjName() {
 		return this.getName().toUpperCase() + "Obj";
 	}
+	
+	/**
+	 * 表的API输出类名
+	 * @return
+	 */
+	public String getApiName()
+	{
+		return this.getName().toUpperCase() + "Api";
+	}
 
 	public ArrayList<Column> getColumns() {
 		return columns;

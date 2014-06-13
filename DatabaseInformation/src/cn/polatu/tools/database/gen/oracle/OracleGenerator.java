@@ -10,6 +10,7 @@ import java.util.Random;
 import cn.polatu.tools.database.common.Util;
 import cn.polatu.tools.database.gen.CompileUint;
 import cn.polatu.tools.database.gen.Context;
+import cn.polatu.tools.database.gen.GenBase;
 import cn.polatu.tools.database.gen.Method;
 import cn.polatu.tools.database.module.Column;
 import cn.polatu.tools.database.module.Schema;
@@ -21,7 +22,7 @@ import cn.polatu.tools.database.module.Table;
  * @author zhangjianshe@gmail.com
  * 
  */
-class OracleGenerator {
+class OracleGenerator extends GenBase{
 
 	Context mContext;
 	Random mRandom;

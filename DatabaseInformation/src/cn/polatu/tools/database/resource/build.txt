@@ -8,6 +8,8 @@
 	</property>
 	<property name="target.module" value="module">
 	</property>
+	<property name="target.api" value="api">
+	</property>
 	<property name="target.access" value="access">
 	</property>
 	<property name="basepath" value="{{BASEPATH}}target/">
@@ -23,10 +25,12 @@
 		<deltree dir="${bin.path}" />
 		<deltree dir="${target.access}" />
 		<deltree dir="${target.module}" />
+		<deltree dir="${target.api}" />
 		<deltree dir="${basepath}" />
 		<mkdir dir="${bin.path}" />
 		<mkdir dir="${target.access}" />
 		<mkdir dir="${target.module}" />
+		<mkdir dir="${target.api}" />
 		<mkdir dir="${basepath}" />
 	</target>
 	<target name="compile" depends="clean" description="">
@@ -39,7 +43,6 @@
 		<copydir dest="${bin.path}" src="${gen.path}" defaultexcludes="true">
 			<include name="**/*.xml" />
 			<include name="**/*.java" />
-			
 		</copydir>
 
 	
@@ -53,6 +56,11 @@
 		<copydir dest="${target.access}" src="${bin.path}" defaultexcludes="true">
 			<include name="**/dao/*.class" />
 			<include name="**/dao/*.java" />
+		</copydir>
+		
+		<copydir dest="${target.api}" src="${bin.path}" defaultexcludes="true">
+			<include name="**/api/*.class" />
+			<include name="**/api/*.java" />
 		</copydir>
 		
 		<copyfile src="database.properties" dest="${basepath}database.properties"/>
@@ -74,8 +82,17 @@
 		</property>
 		<property name="jar.access" value="${basepath}${database_schema}_database_access.jar">
 		</property>
+		<property name="jar.api" value="${basepath}${database_schema}_database_api.jar">
+		</property>
 
 		<jar jarfile="${jar.access}" basedir="${target.access}">
+			<manifest>
+				<attribute name="Create-Date" value="$(DSTAMP)-${TSTAMP}" />
+				<attribute name="Author" value="zhangjianshe@gmail.com" />
+			</manifest>
+		</jar>
+		
+		<jar jarfile="${jar.api}" basedir="${target.api}">
 			<manifest>
 				<attribute name="Create-Date" value="$(DSTAMP)-${TSTAMP}" />
 				<attribute name="Author" value="zhangjianshe@gmail.com" />
