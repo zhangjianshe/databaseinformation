@@ -24,11 +24,10 @@ import cn.polatu.tools.database.module.Table;
  */
 class PostgresGenerator extends GenBase {
 
-	Context mContext;
 	Random mRandom;
 
 	public PostgresGenerator(Context context) {
-		mContext = context;
+		super(context);
 		mRandom = new Random(Calendar.getInstance().getTimeInMillis());
 	}
 
@@ -146,57 +145,6 @@ class PostgresGenerator extends GenBase {
 
 		return packagePath;
 	}
-
-	/**
-	 * @param t
-	 */
-	private void genObj(Table t) {
-		CompileUint unit = new CompileUint(mContext);
-		unit.getComment().addLine("数据库表[" + t.getName() + "]" + t.getComment());
-
-		unit.setUnitName(t.getObjName());
-		unit.setRelativePackage("module");
-		unit.addImplement("java.io.Serializable");
-		unit.setRecordChanged(true);
-
-		unit.getComment().addLine("<code>", false);
-		unit.getComment().addLine("\t<table>", false);
-		unit.getComment().addLine(
-				"\t<tr><td>字段名称</td><td>数据类型</td><td>备注</td></tr>");
-		Column c = new Column();
-		c.access = Column.ACCESS_PRIVATE;
-		c.isChaned = false;
-		c.isFinal = true;
-		c.isRead = false;
-		c.isWrite = false;
-		c.isStatic = true;
-		c.setDbType("custom_long");
-		c.defaultValue = t.getObjName().hashCode() + "L";
-		c.setName("serialVersionUID", false);
-		unit.getFields().add(c);
-
-		for (int j = 0; j < t.getColumns().size(); j++) {
-			c = t.getColumns().get(j);
-			c.access = Column.ACCESS_PRIVATE;
-			c.isChaned = true;
-			unit.getFields().add(c);
-
-			unit.getComment().addLine(
-					String.format(
-							"\t<tr><td>%s</td><td>%s</td><td>%s</td></tr>",
-							c.getFieldName(), c.getDbType(), c.getComment()),
-					false);
-		}
-		unit.getComment().addLine("\t</table>", false);
-		unit.getComment().addLine("</code>", false);
-		unit.getComment().addLine(CompileUint.AUTHOR);
-
-		try {
-			unit.save();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	};
 
 	/**
 	 * @param t

@@ -13,6 +13,7 @@ import cn.polatu.tools.database.gen.CompileUint;
 import cn.polatu.tools.database.gen.Context;
 import cn.polatu.tools.database.gen.GenBase;
 import cn.polatu.tools.database.gen.Method;
+import cn.polatu.tools.database.gen.Parameter;
 import cn.polatu.tools.database.module.Column;
 import cn.polatu.tools.database.module.Schema;
 import cn.polatu.tools.database.module.Table;
@@ -23,13 +24,13 @@ import cn.polatu.tools.database.module.Table;
  * @author zhangjianshe@gmail.com
  * 
  */
-class MySQLGenerator extends GenBase{
+class MySQLGenerator extends GenBase {
 
-	Context mContext;
+	
 	Random mRandom;
 
 	public MySQLGenerator(Context context) {
-		mContext = context;
+		super(context);
 		mRandom = new Random(Calendar.getInstance().getTimeInMillis());
 	}
 
@@ -37,10 +38,9 @@ class MySQLGenerator extends GenBase{
 		return mRandom.nextLong();
 	}
 
-	
 	public void export(Schema schema) {
 		for (int i = 0; i < schema.tables.size(); i++) {
-			log("export "+schema.tables.get(i).getName());
+			log("export " + schema.tables.get(i).getName());
 			Table t = schema.tables.get(i);
 			genObj(t);
 			genObjs(t);
@@ -149,59 +149,7 @@ class MySQLGenerator extends GenBase{
 		return packagePath;
 	}
 
-	/**
-	 * @param t
-	 */
-	private void genObj(Table t) {
-		log("export table obj "+t.getObjName());
-		CompileUint unit = new CompileUint(mContext);
-		unit.getComment().addLine("数据库表[" + t.getName() + "]" + t.getComment());
-
-		unit.setUnitName(t.getObjName());
-		unit.setRelativePackage("module");
-		unit.addImplement("java.io.Serializable");
-		unit.setRecordChanged(true);
-
-		unit.getComment().addLine("<code>", false);
-		unit.getComment().addLine("\t<table>", false);
-		unit.getComment().addLine(
-				"\t<tr><td>字段名称</td><td>数据类型</td><td>备注</td></tr>");
-		Column c = new Column();
-		c.access = Column.ACCESS_PRIVATE;
-		c.isChaned = false;
-		c.isFinal = true;
-		c.isRead = false;
-		c.isWrite = false;
-		c.isStatic = true;
-		c.setDbType("custom_long");
-		c.defaultValue = t.getObjName().hashCode() + "L";
-		c.setName("serialVersionUID", false);
-		unit.getFields().add(c);
-
-		for (int j = 0; j < t.getColumns().size(); j++) {
-			c = t.getColumns().get(j);
-			c.access = Column.ACCESS_PRIVATE;
-			c.isChaned = true;
-			unit.getFields().add(c);
-
-			unit.getComment().addLine(
-					String.format(
-							"\t<tr><td>%s</td><td>%s</td><td>%s</td></tr>",
-							c.getFieldName(), c.getDbType(), c.getComment()),
-					false);
-		}
-		unit.getComment().addLine("\t</table>", false);
-		unit.getComment().addLine("</code>", false);
-		unit.getComment().addLine(CompileUint.AUTHOR);
-
-		log("start save to "+t.getObjName());
-		try {
-			unit.save();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		log("end of "+t.getObjName());
-	};
+	
 
 	/**
 	 * @param t
@@ -337,7 +285,7 @@ class MySQLGenerator extends GenBase{
 				} else {
 					where.append(",");
 				}
-				where.append("`"+c.getName()+"`");
+				where.append("`" + c.getName() + "`");
 			}
 		}
 		m.addBody(
@@ -364,7 +312,7 @@ class MySQLGenerator extends GenBase{
 					p1 += " and `" + c.getName() + "`=?";
 					p2 += "," + c.getName().toLowerCase();
 				} else {
-					p1 +="'"+ c.getName() + "'"+"=?";
+					p1 += "'" + c.getName() + "'" + "=?";
 					p2 += c.getName().toLowerCase();
 				}
 			}
@@ -742,7 +690,8 @@ class MySQLGenerator extends GenBase{
 			c.isWrite = false;
 			c.isStatic = true;
 			c.setDbType("custom_string");
-			c.defaultValue = "\"`" + (t.getColumns().get(i).getFieldName())+"`\"";
+			c.defaultValue = "\"`" + (t.getColumns().get(i).getFieldName())
+					+ "`\"";
 			c.setName("FIELD_" + t.getColumns().get(i).getFieldName(), false);
 			c.setComment("字段" + t.getColumns().get(i).getComment() + "名称");
 			unit.getFields().add(c);
@@ -758,8 +707,7 @@ class MySQLGenerator extends GenBase{
 		m.addThrow("SQLException");
 
 		m.addBody(1, "StringBuilder sql=new StringBuilder();");
-		m.addBody(1, "sql.append(\"INSERT INTO `" + t.getName()
-				+ "` (\");");
+		m.addBody(1, "sql.append(\"INSERT INTO `" + t.getName() + "` (\");");
 		m.addBody(1, "StringBuilder s1=new StringBuilder();");
 		m.addBody(1, "StringBuilder s2=new StringBuilder();");
 		m.addBody(1, "int index=1;");
