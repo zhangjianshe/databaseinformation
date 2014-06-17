@@ -75,5 +75,18 @@ public class Options {
 	 */
 	@Parameter(names = { "--help", "-?", "-h" }, description = "显示帮助信息")
 	public Boolean help = false;
+	
+
+	/**
+	 * 数据类型对照表
+	 */
+	@Parameter(names = { "--dataTypeMapperFile", }, description = "数据类型对照表文件")
+	public String  mapFile = "";
+	
+	/**
+	 * 数据类型对照
+	 */
+	@Parameter(names = { "--mapper", }, description = "数据类型对照表格式[{dbtype,javatype,sqltype,importtypr},{dbtype,javatype,sqltype,importtypr}]")
+	public String  mapper = "";
 
 }

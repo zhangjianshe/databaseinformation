@@ -15,6 +15,7 @@ import cn.polatu.tools.database.gen.Context;
 import cn.polatu.tools.database.gen.IGenerator;
 import cn.polatu.tools.database.gen.mysql.MysqlInformation;
 import cn.polatu.tools.database.gen.postgres.PostgresInformation;
+import cn.polatu.tools.database.module.TypeMapper;
 
 import com.beust.jcommander.JCommander;
 
@@ -41,6 +42,25 @@ public class DatabaseApi extends BObject {
 			j.usage();
 			System.exit(0);
 		}
+
+		if (options.mapFile.length() > 0) {
+			try {
+				TypeMapper.TYPEMAPPER.appendFile(options.mapFile);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		if (options.mapper.length() > 0) {
+			try {
+				TypeMapper.TYPEMAPPER.append(options.mapper);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		// 从配置文件中读取
 		DatabaseApi app = new DatabaseApi();
 		if (options.configureFile.length() > 0) {
@@ -87,15 +107,12 @@ public class DatabaseApi extends BObject {
 
 			app.export(context, options.databaseType, options.jdbcURL,
 					options.userName, options.password, 20);
-		} catch (SQLException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	
 	/**
 	 * 
 	 * @param config
@@ -166,20 +183,30 @@ public class DatabaseApi extends BObject {
 	 * @throws SQLException
 	 */
 	private void export(Context context, String dt, String url,
-			String username, String passwd, int maxConnections)
-			throws Exception, SQLException {
-		ConnectionPool pool = new ConnectionPool(dt, url, username, passwd,
-				maxConnections);
+			String username, String passwd, int maxConnections) {
+		log("export " + dt + "," + username + "," + passwd);
+		ConnectionPool pool = null;
+		try {
+			pool = new ConnectionPool(dt, url, username, passwd, maxConnections);
+		} catch (Exception e) {
+			log(e.getMessage());
+			return;
+		}
+		try {
+			if (dt.equalsIgnoreCase("postgres")) {
+				IGenerator gen = new PostgresInformation();
 
-		if (dt.equalsIgnoreCase("postgres")) {
-			IGenerator gen = new PostgresInformation();
-			gen.export(pool, context);
-		} else if (dt.equalsIgnoreCase("mysql")) {
-			IGenerator gen = new MysqlInformation();
-			gen.export(pool, context);
-		} else {
-			System.out
-					.println("sorry ,we canot provider a implement for " + dt);
+				gen.export(pool, context);
+
+			} else if (dt.equalsIgnoreCase("mysql")) {
+				IGenerator gen = new MysqlInformation();
+				gen.export(pool, context);
+			} else {
+				System.out.println("sorry ,we canot provider a implement for "
+						+ dt);
+			}
+		} catch (SQLException e) {
+			log(e.getMessage());
 		}
 
 		compile(context);

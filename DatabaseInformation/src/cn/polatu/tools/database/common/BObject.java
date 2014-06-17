@@ -12,6 +12,6 @@ public class BObject {
 	 * @param text
 	 */
 	public void log(String text) {
-		//System.out.println(text);
+		System.out.println(text);
 	}
 }
