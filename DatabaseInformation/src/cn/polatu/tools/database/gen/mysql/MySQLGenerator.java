@@ -26,7 +26,6 @@ import cn.polatu.tools.database.module.Table;
  */
 class MySQLGenerator extends GenBase {
 
-	
 	Random mRandom;
 
 	public MySQLGenerator(Context context) {
@@ -148,8 +147,6 @@ class MySQLGenerator extends GenBase {
 
 		return packagePath;
 	}
-
-	
 
 	/**
 	 * @param t
@@ -338,10 +335,10 @@ class MySQLGenerator extends GenBase {
 					method.paras.addParam(c.getJavaType(), c.getName()
 							.toLowerCase(), "", c.getComment());
 					if (p1.length() > 0) {
-						p1 += " and \\\"" + c.getName() + "\\\"=?";
+						p1 += " and `" + c.getName() + "`=?";
 						p2 += "," + c.getName().toLowerCase();
 					} else {
-						p1 += "\\\"" + c.getName() + "\\\"" + "=?";
+						p1 += "`" + c.getName() + "`" + "=?";
 						p2 += c.getName().toLowerCase();
 					}
 				}
@@ -750,13 +747,12 @@ class MySQLGenerator extends GenBase {
 		m.addBody(2, "if(rs.next()){");
 		for (Column c1 : t.getColumns()) {
 			if (c1.isGenerated) {
+				m.addBody(3, "int index1=1;");
 				m.addBody(3, "if(!obj.isChanged(" + (c1.getPosition() - 1)
 						+ ")){");
-				m.addBody(
-						4,
+				m.addBody(4,
 						"obj.set" + Util.toUpperCaseFirstOne(c1.getFieldName())
-								+ "(rs.get" + c1.getSQLType() + "(\""
-								+ c1.getName() + "\"));");
+								+ "(rs.get" + c1.getSQLType() + "(index1++));");
 				m.addBody(3, "}");
 			}
 		}
