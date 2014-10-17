@@ -127,6 +127,16 @@ public class CompileUint extends BObject {
 		UnitType = unitType;
 	}
 
+	public int getTableFieldCount() {
+		int count = 0;
+		for (Column f : fields) {
+			if (f.isWrite) {
+				count++;
+			}
+		}
+		return count;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(mContext.unitComment.toString());
@@ -146,7 +156,7 @@ public class CompileUint extends BObject {
 			c.isStatic = false;
 			c.isFinal = false;
 			c.setName("changed", false);
-			c.defaultValue = "new byte[" + fields.size() + "]";
+			c.defaultValue = "new byte[" + getTableFieldCount() + "]";
 			c.setDbType("custom_byte[]");
 			getFields().add(c);
 
@@ -302,7 +312,6 @@ public class CompileUint extends BObject {
 		log("source:" + fileName);
 		String data = toString();
 
-		
 		out.write(data.getBytes("UTF-8"));
 		out.close();
 	}

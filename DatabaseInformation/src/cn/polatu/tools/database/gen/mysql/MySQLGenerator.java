@@ -309,7 +309,7 @@ class MySQLGenerator extends GenBase {
 					p1 += " and `" + c.getName() + "`=?";
 					p2 += "," + c.getName().toLowerCase();
 				} else {
-					p1 += "'" + c.getName() + "'" + "=?";
+					p1 += "`" + c.getName() + "`" + "=?";
 					p2 += c.getName().toLowerCase();
 				}
 			}
