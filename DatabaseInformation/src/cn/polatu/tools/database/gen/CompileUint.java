@@ -36,6 +36,7 @@ public class CompileUint extends BObject {
 	private ArrayList<Method> methods;
 	private HashSet<String> imports;
 	private boolean recordChanged;
+	private ArrayList<String> annos = new ArrayList<>();
 
 	public boolean isRecordChanged() {
 		return recordChanged;
@@ -43,6 +44,10 @@ public class CompileUint extends BObject {
 
 	public void setRecordChanged(boolean recordChanged) {
 		this.recordChanged = recordChanged;
+	}
+
+	public void addAnnos(String anno) {
+		annos.add(anno);
 	}
 
 	public String getRelativePackage() {
@@ -196,7 +201,11 @@ public class CompileUint extends BObject {
 		for (int i = 0; i < is.length; i++) {
 			sb.append("import " + is[i] + ";\r\n");
 		}
-		sb.append(comment.toString());
+		
+		for(String line:annos)
+		{
+			sb.append(line);
+		}
 		sb.append(UnitAccess).append(" ").append(UnitType).append(" ");
 		sb.append(UnitName);
 
@@ -233,6 +242,11 @@ public class CompileUint extends BObject {
 		Comment fcom = new Comment(1);
 		fcom.setTitle(f.getComment());
 		sb.append(fcom.toString());
+
+		sb.append(comment.toString());
+		for (String line : f.getAnnotation()) {
+			sb.append(line);
+		}
 		sb.append("\t" + f.access + (f.isFinal ? " final " : " ")
 				+ (f.isStatic ? " static " : " ") + f.getJavaType() + " "
 				+ f.getFieldName()

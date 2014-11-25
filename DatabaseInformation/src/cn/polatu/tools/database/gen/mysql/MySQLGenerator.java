@@ -44,9 +44,41 @@ class MySQLGenerator extends GenBase {
 			genObj(t);
 			genObjs(t);
 			genDao(t);
+			genNutsObj(t);
 		}
 
 		genXmlFiles(schema);
+	}
+
+	/**
+	 * @param t
+	 */
+	private void genNutsObj(Table t) {
+		log("export table obj " + t.getObjName());
+		CompileUint unit = new CompileUint(mContext);
+		unit.addImport("org.nutz.dao.entity.annotation.Column");
+		unit.addImport("org.nutz.dao.entity.annotation.Id");
+		unit.addImport("org.nutz.dao.entity.annotation.Table");
+		unit.addImport("org.nutz.dao.entity.annotation.Name");
+
+		unit.setUnitName(t.getNuzName());
+		unit.setRelativePackage("shared.entity");
+		unit.setRecordChanged(false);
+		Column c;
+
+		for (int j = 0; j < t.getColumns().size(); j++) {
+
+			c = t.getColumns().get(j).copy();
+			c.access = Column.ACCESS_PRIVATE;
+			c.isChaned = false;
+			unit.getFields().add(c);
+		}
+
+		try {
+			unit.save();
+		} catch (IOException e) {
+			log(e.getMessage());
+		}
 	}
 
 	/**

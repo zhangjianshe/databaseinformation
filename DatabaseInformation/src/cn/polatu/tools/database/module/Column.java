@@ -1,5 +1,8 @@
 package cn.polatu.tools.database.module;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 表中的列
  * 
@@ -23,6 +26,31 @@ public class Column {
 		defaultValue = "";
 	}
 
+	public Column copy() {
+		Column c = new Column();
+		c.isKey = this.isKey;
+		c.isStatic = this.isStatic;
+		c.isFinal = this.isFinal;
+		c.access = this.access;
+		c.isRead = this.isRead;
+		c.isWrite = this.isWrite;
+		c.isChaned = this.isChaned;
+		c.defaultValue = this.defaultValue;
+		c.bChaneUpcase = this.bChaneUpcase;
+		c.name = this.name;
+		c.dbType = this.dbType;
+		c.comment = this.comment;
+		c.position = this.position;
+		c.isGenerated = this.isGenerated;
+		c.annos = new ArrayList<>();
+		for (String s : this.annos) {
+			c.annos.add(new String(s));
+		}
+		return c;
+	}
+
+	ArrayList<String> annos = new ArrayList<>();
+
 	private boolean bChaneUpcase;
 	private String name;
 	private String dbType;
@@ -38,6 +66,14 @@ public class Column {
 	public boolean isChaned;
 	public String defaultValue;
 	public boolean isGenerated;
+
+	public void addAnnotation(String line) {
+		annos.add(line);
+	}
+
+	public List<String> getAnnotation() {
+		return annos;
+	}
 
 	public int getPosition() {
 		return position;

@@ -62,27 +62,24 @@ public class Table {
 	public String getObjName() {
 		return this.getName().toUpperCase() + "Obj";
 	}
-	
+
 	/**
 	 * 表的API输出类名
+	 * 
 	 * @return
 	 */
-	public String getApiName()
-	{
+	public String getApiName() {
 		return this.getName().toUpperCase() + "Api";
 	}
 
 	public ArrayList<Column> getColumns() {
 		return columns;
 	}
-	
-	public ArrayList<Column> getPrimaryKeys()
-	{
-		ArrayList<Column> keys=new ArrayList<Column>();
-		for(Column c:columns)
-		{
-			if(c.isKey())
-			{
+
+	public ArrayList<Column> getPrimaryKeys() {
+		ArrayList<Column> keys = new ArrayList<Column>();
+		for (Column c : columns) {
+			if (c.isKey()) {
 				keys.add(c);
 			}
 		}
@@ -96,6 +93,22 @@ public class Table {
 	 */
 	public String getObjsName() {
 		return getObjName() + "s";
+	}
+
+	public String getNuzName() {
+		String name = toFirstUpper(getName());
+		return name;
+	}
+
+	public String getTableName() {
+		return getName().toLowerCase();
+	}
+
+	public String toFirstUpper(String str) {
+		StringBuilder sb = new StringBuilder();
+		sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
+		String s = sb.toString();
+		return s;
 	}
 
 	public String toString() {
