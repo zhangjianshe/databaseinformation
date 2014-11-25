@@ -46,7 +46,9 @@ public class GenBase extends BObject {
 	 */
 	protected void genObj(Table t) {
 		log("export table obj " + t.getObjName());
-		CompileUint unit = new CompileUint(mContext);
+		Context ct=mContext.copy();
+		ct.setPackageName(ct.getPackageName()+".server.database");
+		CompileUint unit = new CompileUint(ct);
 		unit.getComment().addLine("数据库表[" + t.getName() + "]" + t.getComment());
 
 		unit.setUnitName(t.getObjName());

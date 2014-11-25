@@ -6,27 +6,39 @@ import java.util.Date;
 public class Context {
 
 	public Context() {
-		SimpleDateFormat df=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		unitComment = new Comment(0);
-		unitComment.addLine(df.format(new Date())+"  database api exporter V4.0");
+		unitComment.addLine(df.format(new Date())
+				+ "  database api exporter V4.0");
 		unitComment
 				.addLine("============================================================");
-		unitComment.addLine("#  ____ _  _ ____ _  _ ____  _ _ ____ _  _ ____ _  _ ____  #");
-		unitComment.addLine("#   __] |__| |__| |\\ | | __  | | |__| |\\ | [__  |__| |___  #");
-		unitComment.addLine("#  [___ |  | |  | | \\| |__| _| | |  | | \\| ___] |  | |___  #");
-		unitComment.addLine("#           http://hi.baidu.com/zhangjianshe               #");
-		unitComment.addLine("============================================================");
-		
-		
-		
+		unitComment
+				.addLine("#  ____ _  _ ____ _  _ ____  _ _ ____ _  _ ____ _  _ ____  #");
+		unitComment
+				.addLine("#   __] |__| |__| |\\ | | __  | | |__| |\\ | [__  |__| |___  #");
+		unitComment
+				.addLine("#  [___ |  | |  | | \\| |__| _| | |  | | \\| ___] |  | |___  #");
+		unitComment
+				.addLine("#           http://hi.baidu.com/zhangjianshe               #");
+		unitComment
+				.addLine("============================================================");
 	}
 
 	Comment unitComment;
 	private String mBasePath;
 	private String packageName;
 	private String schema;
-	private String output="";
-	
+	private String output = "";
+
+	public Context copy() {
+		Context c = new Context();
+		c.mBasePath = this.mBasePath;
+		c.packageName = this.packageName;
+		c.schema = this.schema;
+		c.output = this.output;
+		return c;
+	}
+
 	public String getOutput() {
 		return output;
 	}

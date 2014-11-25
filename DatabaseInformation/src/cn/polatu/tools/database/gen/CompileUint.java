@@ -201,10 +201,10 @@ public class CompileUint extends BObject {
 		for (int i = 0; i < is.length; i++) {
 			sb.append("import " + is[i] + ";\r\n");
 		}
-		
-		for(String line:annos)
-		{
+
+		for (String line : annos) {
 			sb.append(line);
+			sb.append("\r\n");
 		}
 		sb.append(UnitAccess).append(" ").append(UnitType).append(" ");
 		sb.append(UnitName);
@@ -239,13 +239,10 @@ public class CompileUint extends BObject {
 	}
 
 	private void processField(StringBuilder sb, Column f) {
-		Comment fcom = new Comment(1);
-		fcom.setTitle(f.getComment());
-		sb.append(fcom.toString());
 
-		sb.append(comment.toString());
 		for (String line : f.getAnnotation()) {
 			sb.append(line);
+			sb.append("\r\n");
 		}
 		sb.append("\t" + f.access + (f.isFinal ? " final " : " ")
 				+ (f.isStatic ? " static " : " ") + f.getJavaType() + " "
@@ -259,7 +256,8 @@ public class CompileUint extends BObject {
 		if (f.isRead) {
 			m = Method.createMethod("get"
 					+ Util.toUpperCaseFirstOne(f.getFieldName()));
-			m.addComment("获取字段" + f.getFieldName() + "值");
+			m.addComment("获取字段" + f.getComment() == null ? f.getFieldName() : f
+					.getComment() + "值");
 			m.returnValue.setType(f.getJavaType());
 			m.returnValue.setSummary("字段" + f.getFieldName() + " "
 					+ f.getJavaType());
@@ -270,7 +268,8 @@ public class CompileUint extends BObject {
 		if (f.isWrite) {
 			m = Method.createMethod("set"
 					+ Util.toUpperCaseFirstOne(f.getFieldName()));
-			m.addComment("设置字段" + f.getFieldName() + "值");
+			m.addComment("设置字段" + f.getComment() == null ? f.getFieldName() : f
+					.getComment() + "值");
 			m.paras.addParam(f.getJavaType(), f.getFieldName().toLowerCase(),
 					"", f.getComment());
 			if (isRecordChanged()) {

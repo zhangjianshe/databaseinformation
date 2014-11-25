@@ -96,8 +96,12 @@ public class Table {
 	}
 
 	public String getNuzName() {
-		String name = toFirstUpper(getName());
-		return name;
+		String[] parts = getName().split("_");
+		StringBuilder sb = new StringBuilder();
+		for (String s : parts) {
+			sb.append(toFirstUpper(s));
+		}
+		return sb.toString();
 	}
 
 	public String getTableName() {
@@ -105,7 +109,7 @@ public class Table {
 	}
 
 	public String toFirstUpper(String str) {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(str);
 		sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
 		String s = sb.toString();
 		return s;

@@ -38,16 +38,39 @@ class MySQLGenerator extends GenBase {
 	}
 
 	public void export(Schema schema) {
+
 		for (int i = 0; i < schema.tables.size(); i++) {
 			log("export " + schema.tables.get(i).getName());
 			Table t = schema.tables.get(i);
 			genObj(t);
 			genObjs(t);
 			genDao(t);
+
 			genNutsObj(t);
 		}
 
+		toFixFile(schema);
 		genXmlFiles(schema);
+	}
+
+	/**
+	 * 
+	 */
+	private void toFixFile(Schema schema) {
+
+		Context ctx = mContext.copy();
+
+		try {
+			String subpackage = "shared.entity";
+			String build = Util
+					.readResource("cn/polatu/tools/database/resource/baseentity.txt");
+			String packagePath = getPackage(ctx, subpackage);
+			build = build.replaceAll("\\$\\{package\\}", packagePath);
+			saveData(ctx, build, subpackage, "BaseEntity.java");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -55,20 +78,38 @@ class MySQLGenerator extends GenBase {
 	 */
 	private void genNutsObj(Table t) {
 		log("export table obj " + t.getObjName());
-		CompileUint unit = new CompileUint(mContext);
+		Context ct = mContext.copy();
+		ct.setPackageName(ct.getPackageName() + ".shared.entity");
+
+		CompileUint unit = new CompileUint(ct);
 		unit.addImport("org.nutz.dao.entity.annotation.Column");
 		unit.addImport("org.nutz.dao.entity.annotation.Id");
 		unit.addImport("org.nutz.dao.entity.annotation.Table");
 		unit.addImport("org.nutz.dao.entity.annotation.Name");
+		unit.addImport(ct.getPackageName() + ".BaseEntity");
 
+		unit.addAnnos("@Table(\"" + t.getName().toLowerCase() + "\")");
 		unit.setUnitName(t.getNuzName());
-		unit.setRelativePackage("shared.entity");
 		unit.setRecordChanged(false);
+		unit.setExtend("BaseEntity");
 		Column c;
 
 		for (int j = 0; j < t.getColumns().size(); j++) {
 
 			c = t.getColumns().get(j).copy();
+			if (c.isKey()) {
+				if (c.getJavaType().startsWith("Integer")) {
+					c.addAnnotation("@Id");
+				} else if (c.getJavaType().startsWith("String")) {
+					c.addAnnotation("@Name");
+				} else {
+					c.addAnnotation("@Column(\"" + c.getName().toLowerCase()
+							+ "\")");
+				}
+			} else {
+				c.addAnnotation("@Column(\"" + c.getName().toLowerCase()
+						+ "\")");
+			}
 			c.access = Column.ACCESS_PRIVATE;
 			c.isChaned = false;
 			unit.getFields().add(c);
@@ -88,10 +129,13 @@ class MySQLGenerator extends GenBase {
 	 */
 	private void genXmlFiles(Schema schema) {
 		// generator database properties
+		Context ct = mContext.copy();
+		ct.setPackageName(ct.getPackageName() + ".server.database");
+
 		try {
 			String build = Util
 					.readResource("cn/polatu/tools/database/resource/gwt.txt");
-			saveData(build, "", schema.name + "Data.gwt.xml");
+			saveData(ct, build, "", schema.name + "Data.gwt.xml");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -102,10 +146,10 @@ class MySQLGenerator extends GenBase {
 		sb.append("<dwr>\r\n");
 		sb.append("\t<allow>\r\n");
 		for (Table t : schema.tables) {
-			String obj = getPackage("module") + "." + t.getObjName();
+			String obj = getPackage(ct, "module") + "." + t.getObjName();
 			sb.append("\t\t<convert converter=\"bean\" match=\"" + obj
 					+ "\"/>\r\n");
-			obj = getPackage("module") + "." + t.getObjsName();
+			obj = getPackage(ct, "module") + "." + t.getObjsName();
 			sb.append("\t\t<convert converter=\"bean\" match=\"" + obj
 					+ "\"/>\r\n");
 		}
@@ -113,7 +157,7 @@ class MySQLGenerator extends GenBase {
 		sb.append("</dwr>\r\n");
 
 		try {
-			saveBasePathData(sb.toString(), "dwr_objs.xml");
+			saveBasePathData(ct, sb.toString(), "dwr_objs.xml");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -127,11 +171,11 @@ class MySQLGenerator extends GenBase {
 	 * @param fileName
 	 * @throws IOException
 	 */
-	public void saveData(String data, String subpackage, String fileName)
-			throws IOException {
-		String packagePath = getPackage(subpackage);
+	public void saveData(Context ctx, String data, String subpackage,
+			String fileName) throws IOException {
+		String packagePath = getPackage(ctx, subpackage);
 		packagePath = packagePath.replace('.', File.separatorChar);
-		String path = mContext.getBasePath() + File.separator + packagePath;
+		String path = ctx.getBasePath() + File.separator + packagePath;
 		File f = new File(path);
 		if (!f.exists()) {
 			f.mkdirs();
@@ -151,9 +195,9 @@ class MySQLGenerator extends GenBase {
 	 * @param fileName
 	 * @throws IOException
 	 */
-	public void saveBasePathData(String data, String fileName)
+	public void saveBasePathData(Context ctx, String data, String fileName)
 			throws IOException {
-		String path = mContext.getBasePath();
+		String path = ctx.getBasePath();
 		File f = new File(path);
 		if (!f.exists()) {
 			f.mkdirs();
@@ -170,8 +214,8 @@ class MySQLGenerator extends GenBase {
 	 * 
 	 * @return
 	 */
-	public String getPackage(String relativePackage) {
-		String packagePath = mContext.getPackageName();
+	public String getPackage(Context ctx, String relativePackage) {
+		String packagePath = ctx.getPackageName();
 
 		if (relativePackage != null && relativePackage.length() > 0) {
 			packagePath += "." + relativePackage;
@@ -184,7 +228,10 @@ class MySQLGenerator extends GenBase {
 	 * @param t
 	 */
 	private void genObjs(Table t) {
-		CompileUint unit = new CompileUint(mContext);
+		Context ct = mContext.copy();
+		ct.setPackageName(ct.getPackageName() + ".server.database");
+
+		CompileUint unit = new CompileUint(ct);
 		unit.getComment().addLine(
 				"数据库表[" + t.getName() + "]集合" + t.getComment());
 
@@ -220,7 +267,10 @@ class MySQLGenerator extends GenBase {
 	 * @param t
 	 */
 	private void genDao(Table t) {
-		CompileUint unit = new CompileUint(mContext);
+		Context ct = mContext.copy();
+		ct.setPackageName(ct.getPackageName() + ".server.database");
+
+		CompileUint unit = new CompileUint(ct);
 		unit.getComment().addLine(
 				"数据库表[" + t.getName() + "]访问代码" + t.getComment());
 
@@ -235,8 +285,8 @@ class MySQLGenerator extends GenBase {
 		unit.addImport("cn.mapway.tools.database.ExecuteResult");
 		unit.addImport("cn.mapway.tools.database.IConnectionPool");
 		unit.addImport("cn.mapway.tools.database.AccessBase");
-		unit.addImport(mContext.getPackageName() + ".module." + t.getObjName());
-		unit.addImport(mContext.getPackageName() + ".module." + t.getObjsName());
+		unit.addImport(ct.getPackageName() + ".module." + t.getObjName());
+		unit.addImport(ct.getPackageName() + ".module." + t.getObjsName());
 		unit.setRecordChanged(false);
 		unit.setExtend("AccessBase");
 

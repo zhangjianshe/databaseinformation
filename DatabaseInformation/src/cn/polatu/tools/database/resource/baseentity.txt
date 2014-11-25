@@ -1,0 +1,25 @@
+
+package ${package};
+
+import java.util.Map;
+
+/**
+ * 数据库实体类基类
+ * @author zhangjianshe@navinfo.com
+ *
+ */
+public class BaseEntity {
+
+	/**
+	 * 扩展字段，非持久化数据
+	 */
+	Map<String, Object> extFields;
+
+	public Map<String, Object> getExtFields() {
+		return extFields;
+	}
+
+	public void setExtFields(Map<String, Object> extFields) {
+		this.extFields = extFields;
+	}
+}

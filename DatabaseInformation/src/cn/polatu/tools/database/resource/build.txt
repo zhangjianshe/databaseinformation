@@ -12,6 +12,8 @@
 	</property>
 	<property name="target.access" value="access">
 	</property>
+	<property name="target.nuz" value="nuz">
+	</property>
 	<property name="basepath" value="{{BASEPATH}}target/">
 	</property>
 	
@@ -26,11 +28,13 @@
 		<deltree dir="${target.access}" />
 		<deltree dir="${target.module}" />
 		<deltree dir="${target.api}" />
+		<deltree dir="${target.nuz}" />
 		<deltree dir="${basepath}" />
 		<mkdir dir="${bin.path}" />
 		<mkdir dir="${target.access}" />
 		<mkdir dir="${target.module}" />
 		<mkdir dir="${target.api}" />
+		<mkdir dir="${target.nuz}" />
 		<mkdir dir="${basepath}" />
 	</target>
 	<target name="compile" depends="clean" description="">
@@ -63,11 +67,15 @@
 			<include name="**/api/*.java" />
 		</copydir>
 		
+		<copydir dest="${target.nuz}" src="${bin.path}" defaultexcludes="true">
+			<include name="**/shared/entity/*.class" />
+			<include name="**/shared/entity/*.java" />
+		</copydir>
+		
 		<copyfile src="database.properties" dest="${basepath}database.properties"/>
 		<copyfile src="${gen.path}\dwr_objs.xml" dest="${basepath}dwr_objs.xml"/>
 		<copyfile src="..\..\lib\cn.mapway.tools.database.jar" dest="${basepath}cn.mapway.tools.database.jar"/>
 		<copyfile src="..\..\lib\javax.servlet.jsp.jstl.jar" dest="${basepath}javax.servlet.jsp.jstl.jar"/>
-		<copyfile src="..\..\lib\cn.mapway.tools.database.jar" dest="${basepath}cn.mapway.tools.database.jar"/>
 		
 	</target>
 
@@ -84,7 +92,9 @@
 		</property>
 		<property name="jar.api" value="${basepath}${database_schema}_database_api.jar">
 		</property>
-
+		<property name="jar.nuz" value="${basepath}${database_schema}_database_nuz.jar">
+		</property>
+		
 		<jar jarfile="${jar.access}" basedir="${target.access}">
 			<manifest>
 				<attribute name="Create-Date" value="$(DSTAMP)-${TSTAMP}" />
@@ -100,6 +110,12 @@
 		</jar>
 
 		<jar jarfile="${jar.module}" basedir="${target.module}">
+			<manifest>
+				<attribute name="Create-Date" value="$(DSTAMP)-${TSTAMP}" />
+				<attribute name="Author" value="zhangjianshe@gmail.com" />
+			</manifest>
+		</jar>
+		<jar jarfile="${jar.nuz}" basedir="${target.nuz}">
 			<manifest>
 				<attribute name="Create-Date" value="$(DSTAMP)-${TSTAMP}" />
 				<attribute name="Author" value="zhangjianshe@gmail.com" />
