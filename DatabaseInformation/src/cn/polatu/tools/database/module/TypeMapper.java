@@ -1,7 +1,6 @@
 package cn.polatu.tools.database.module;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +28,9 @@ public class TypeMapper {
 	}
 
 	/**
-	 * 追加格式对照表 [{dbtype,javatype,sqltype,importtypr},{dbtype,javatype,sqltype,
-	 * importtypr}]
+	 * 追加格式对照表
+	 * [{dbtype,javatype,sqltype,importtypr,gwttype},{dbtype,javatype,sqltype,
+	 * importtypr,gwttype}]
 	 * 
 	 * @param mapper
 	 */
@@ -66,8 +66,11 @@ public class TypeMapper {
 				String dbtype = ds.length > 0 ? ds[0].trim().toUpperCase() : "";
 				String javatype = ds.length > 1 ? ds[1].trim() : "";
 				String sqltype = ds.length > 2 ? ds[2].trim() : "";
-				String importtype = ds.length > 3 ? ds[3].trim() : "";
-				TypePair p = new TypePair(dbtype, javatype, sqltype, importtype);
+				String gwttype = ds.length > 3 ? ds[3].trim() : javatype;
+				String importtype = ds.length > 4 ? ds[4].trim() : "";
+
+				TypePair p = new TypePair(dbtype, javatype, sqltype,
+						importtype, gwttype);
 				maps.add(p);
 			}
 		}
@@ -97,8 +100,10 @@ public class TypeMapper {
 			String dbtype = ds.length > 0 ? ds[0].trim().toUpperCase() : "";
 			String javatype = ds.length > 1 ? ds[1].trim() : "";
 			String sqltype = ds.length > 2 ? ds[2].trim() : "";
-			String importtype = ds.length > 3 ? ds[3].trim() : "";
-			TypePair p = new TypePair(dbtype, javatype, sqltype, importtype);
+			String gwttype = ds.length > 3 ? ds[3].trim() : javatype;
+			String importtype = ds.length > 4 ? ds[4].trim() : "";
+			TypePair p = new TypePair(dbtype, javatype, sqltype, importtype,
+					gwttype);
 			maps.add(p);
 			line = reader.readLine();
 		}
@@ -116,8 +121,11 @@ public class TypeMapper {
 			String dbtype = ds.length > 0 ? ds[0].trim().toUpperCase() : "";
 			String javatype = ds.length > 1 ? ds[1].trim() : "";
 			String sqltype = ds.length > 2 ? ds[2].trim() : "";
-			String importtype = ds.length > 3 ? ds[3].trim() : "";
-			TypePair p = new TypePair(dbtype, javatype, sqltype, importtype);
+			String gwttype = ds.length > 3 ? ds[3].trim() : javatype;
+			String importtype = ds.length > 4 ? ds[4].trim() : "";
+
+			TypePair p = new TypePair(dbtype, javatype, sqltype, importtype,
+					gwttype);
 			maps.add(p);
 			line = reader.readLine();
 		}

@@ -9,11 +9,12 @@ package cn.polatu.tools.database.module;
 public class TypePair {
 
 	public TypePair(String dbtype, String javatype, String sqltype,
-			String importtype) {
+			String importtype, String gwtType) {
 		dbType = dbtype;
 		javaType = javatype;
 		sqlType = sqltype;
 		importType = importtype;
+		this.gwtType = gwtType;
 	}
 
 	/**
@@ -28,7 +29,10 @@ public class TypePair {
 	 * jdbc数据库类型
 	 */
 	public String sqlType;
-
+	/**
+	 * Gwt javascriptObject类型
+	 */
+	public String gwtType;
 	/**
 	 * IMport 类型
 	 */
@@ -39,6 +43,7 @@ public class TypePair {
 		sb.append(dbType).append(",");
 		sb.append(javaType).append(",");
 		sb.append(sqlType).append(",");
+		sb.append(gwtType).append(",");
 		sb.append(importType);
 		return sb.toString();
 	}

@@ -7,13 +7,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
 
-import cn.polatu.tools.database.common.BObject;
 import cn.polatu.tools.database.common.Util;
 import cn.polatu.tools.database.gen.CompileUint;
 import cn.polatu.tools.database.gen.Context;
 import cn.polatu.tools.database.gen.GenBase;
 import cn.polatu.tools.database.gen.Method;
-import cn.polatu.tools.database.gen.Parameter;
 import cn.polatu.tools.database.module.Column;
 import cn.polatu.tools.database.module.Schema;
 import cn.polatu.tools.database.module.Table;
@@ -47,10 +45,88 @@ class MySQLGenerator extends GenBase {
 			genDao(t);
 
 			genNutsObj(t);
-		}
+			genGwtObjs(t);
 
+		}
+		genGwtWeb();
 		toFixFile(schema);
 		genXmlFiles(schema);
+	}
+
+	/**
+	 * @param t
+	 */
+	private void genGwtWeb() {
+		Context ct = mContext.copy();
+
+		StringBuilder sb = new StringBuilder();
+		ct.setPackageName(ct.getPackageName() + ".gwt.web");
+
+		sb.append("package " + ct.getPackageName() + ";\r\n");
+		sb.append("import com.google.gwt.core.client.JavaScriptObject;\r\n");
+		sb.append("import com.google.gwt.core.client.JsArray;\r\n");
+		String unitName = "WebListResp";
+		sb.append("public class " + unitName
+				+ "<T extends JavaScriptObject> extends JavaScriptObject{\r\n");
+		sb.append("\tprotected " + unitName + "(){}\r\n");
+		sb.append("\tpublic final native int getTotal()/*-{return this.total;}-*/;\r\n");
+		sb.append("\tpublic final native int getSuccess()/*-{return this.success;}-*/;\r\n");
+		sb.append("\tpublic final native int getMessage()/*-{return this.message;}-*/;\r\n");
+		sb.append("\tpublic final native JsArray<T> getData()/*-{return this.data;}-*/;\r\n");
+
+		sb.append("}\r\n");
+		CompileUint unit = new CompileUint(ct);
+		unit.setUnitName(unitName);
+		try {
+			unit.save(sb.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * @param t
+	 */
+	private void genGwtObjs(Table t) {
+		log("export table obj for gwt objs " + t.getObjName());
+
+		Context ct = mContext.copy();
+
+		StringBuilder sb = new StringBuilder();
+		ct.setPackageName(ct.getPackageName() + ".gwt.entity");
+
+		sb.append("package " + ct.getPackageName() + ";\r\n");
+		sb.append("import com.google.gwt.core.client.JavaScriptObject;\r\n");
+		sb.append("import com.google.gwt.core.client.JsDate;\r\n");
+
+		sb.append("public class " + t.getNuzName()
+				+ " extends JavaScriptObject {\r\n");
+		sb.append("\tprotected " + t.getNuzName() + "(){}\r\n");
+
+		for (int j = 0; j < t.getColumns().size(); j++) {
+			Column c = t.getColumns().get(j).copy();
+			sb.append("\tpublic final native " + c.getGwtType() + " get"
+					+ c.getName().toUpperCase() + "()/*-{\r\n");
+			sb.append("\t\treturn this." + c.getName().toUpperCase() + ";\r\n");
+			sb.append("\t}-*/;\r\n");
+
+			sb.append("\tpublic final native void set"
+					+ c.getName().toUpperCase() + "(" + c.getGwtType() + " "
+					+ c.getName().toLowerCase() + ")/*-{\r\n");
+			sb.append("\t\treturn this." + c.getName().toUpperCase() + "="
+					+ c.getName().toLowerCase() + ";\r\n");
+			sb.append("\t}-*/;\r\n");
+		}
+		sb.append("}\r\n");
+		CompileUint unit = new CompileUint(ct);
+		unit.setUnitName(t.getNuzName());
+		try {
+			unit.save(sb.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -61,7 +137,7 @@ class MySQLGenerator extends GenBase {
 		Context ctx = mContext.copy();
 
 		try {
-			String subpackage = "shared.entity";
+			String subpackage = "nuz.entity";
 			String build = Util
 					.readResource("cn/polatu/tools/database/resource/baseentity.txt");
 			String packagePath = getPackage(ctx, subpackage);
@@ -79,7 +155,7 @@ class MySQLGenerator extends GenBase {
 	private void genNutsObj(Table t) {
 		log("export table obj " + t.getObjName());
 		Context ct = mContext.copy();
-		ct.setPackageName(ct.getPackageName() + ".shared.entity");
+		ct.setPackageName(ct.getPackageName() + ".nuz.entity");
 
 		CompileUint unit = new CompileUint(ct);
 		unit.addImport("org.nutz.dao.entity.annotation.Column");
@@ -136,6 +212,17 @@ class MySQLGenerator extends GenBase {
 			String build = Util
 					.readResource("cn/polatu/tools/database/resource/gwt.txt");
 			saveData(ct, build, "", schema.name + "Data.gwt.xml");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		Context ct1 = mContext.copy();
+		ct1.setPackageName(ct1.getPackageName() + ".gwt");
+		try {
+			String build = Util
+					.readResource("cn/polatu/tools/database/resource/gwtmodule.txt");
+			saveData(ct1, build, "", schema.name + "Object.gwt.xml");
 
 		} catch (IOException e) {
 			e.printStackTrace();

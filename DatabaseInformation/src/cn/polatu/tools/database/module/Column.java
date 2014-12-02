@@ -127,6 +127,21 @@ public class Column {
 	}
 
 	/**
+	 * 获取字段的Java类型
+	 * 
+	 * @return
+	 */
+	public String getGwtType() {
+		TypePair p = TypeMapper.TYPEMAPPER.findByDbType(dbType);
+		if (p != null) {
+			return p.gwtType;
+		} else {
+			System.out.println(" could not find dbtype " + dbType);
+			return "";
+		}
+	}
+
+	/**
 	 * 获取字段的SQL类型
 	 * 
 	 * @return

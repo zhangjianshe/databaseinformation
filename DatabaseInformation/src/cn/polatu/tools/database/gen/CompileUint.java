@@ -1,8 +1,10 @@
 package cn.polatu.tools.database.gen;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -326,6 +328,25 @@ public class CompileUint extends BObject {
 		String data = toString();
 
 		out.write(data.getBytes("UTF-8"));
+		out.close();
+	}
+
+	public void save(String body) throws UnsupportedEncodingException,
+			IOException {
+		String packagePath = getPackage();
+
+		packagePath = packagePath.replace('.', File.separatorChar);
+		String path = mContext.getBasePath() + File.separator + packagePath;
+		File f = new File(path);
+		if (!f.exists()) {
+			f.mkdirs();
+		}
+
+		String fileName = path + File.separator + UnitName + ".java";
+		FileOutputStream out = new FileOutputStream(new File(fileName));
+		log("source:" + fileName);
+
+		out.write(body.getBytes("UTF-8"));
 		out.close();
 	}
 

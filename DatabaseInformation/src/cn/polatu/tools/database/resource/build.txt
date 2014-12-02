@@ -14,6 +14,8 @@
 	</property>
 	<property name="target.nuz" value="nuz">
 	</property>
+	<property name="target.gwt" value="gwt">
+	</property>
 	<property name="basepath" value="{{BASEPATH}}target/">
 	</property>
 	
@@ -29,12 +31,14 @@
 		<deltree dir="${target.module}" />
 		<deltree dir="${target.api}" />
 		<deltree dir="${target.nuz}" />
+		<deltree dir="${target.gwt}" />
 		<deltree dir="${basepath}" />
 		<mkdir dir="${bin.path}" />
 		<mkdir dir="${target.access}" />
 		<mkdir dir="${target.module}" />
 		<mkdir dir="${target.api}" />
 		<mkdir dir="${target.nuz}" />
+		<mkdir dir="${target.gwt}" />
 		<mkdir dir="${basepath}" />
 	</target>
 	<target name="compile" depends="clean" description="">
@@ -68,8 +72,14 @@
 		</copydir>
 		
 		<copydir dest="${target.nuz}" src="${bin.path}" defaultexcludes="true">
-			<include name="**/shared/entity/*.class" />
-			<include name="**/shared/entity/*.java" />
+			<include name="**/nuz/*/*.class" />
+			<include name="**/nuz/*/*.java" />
+		</copydir>
+		
+		<copydir dest="${target.gwt}" src="${bin.path}" defaultexcludes="true">
+			<include name="**/gwt/*/*.class" />
+			<include name="**/gwt/*/*.java" />
+			<include name="**/gwt/*gwt.xml" />
 		</copydir>
 		
 		<copyfile src="database.properties" dest="${basepath}database.properties"/>
@@ -94,6 +104,8 @@
 		</property>
 		<property name="jar.nuz" value="${basepath}${database_schema}_database_nuz.jar">
 		</property>
+		<property name="jar.gwt" value="${basepath}${database_schema}_database_gwt.jar">
+		</property>
 		
 		<jar jarfile="${jar.access}" basedir="${target.access}">
 			<manifest>
@@ -116,6 +128,12 @@
 			</manifest>
 		</jar>
 		<jar jarfile="${jar.nuz}" basedir="${target.nuz}">
+			<manifest>
+				<attribute name="Create-Date" value="$(DSTAMP)-${TSTAMP}" />
+				<attribute name="Author" value="zhangjianshe@gmail.com" />
+			</manifest>
+		</jar>
+		<jar jarfile="${jar.gwt}" basedir="${target.gwt}">
 			<manifest>
 				<attribute name="Create-Date" value="$(DSTAMP)-${TSTAMP}" />
 				<attribute name="Author" value="zhangjianshe@gmail.com" />
